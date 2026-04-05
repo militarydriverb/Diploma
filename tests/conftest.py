@@ -12,7 +12,9 @@ from app.models.user import User
 from app.services.auth import hash_password
 
 # URL тестовой базы данных
-TEST_DATABASE_URL = "postgresql+asyncpg://postgres:Qwerty123@localhost:5432/diploma_test"
+TEST_DATABASE_URL = (
+    "postgresql+asyncpg://postgres:Qwerty123@localhost:5432/diploma_test"
+)
 
 
 def _make_engine():
@@ -24,8 +26,10 @@ def _make_engine():
 # Хуки pytest: создаём/удаляем схему через asyncio.run() вне pytest-asyncio
 # ---------------------------------------------------------------------------
 
+
 def pytest_sessionstart(session):
     """Создаём таблицы один раз перед всеми тестами (drop_all + create_all)."""
+
     async def _setup():
         engine = _make_engine()
         async with engine.begin() as conn:
@@ -39,6 +43,7 @@ def pytest_sessionstart(session):
 # Фикстуры
 # ---------------------------------------------------------------------------
 
+
 @pytest_asyncio.fixture(autouse=True)
 async def clean_tables():
     """Очищаем таблицы перед каждым тестом (TRUNCATE CASCADE).
@@ -49,7 +54,9 @@ async def clean_tables():
         # Ограничиваем время ожидания блокировки — защита от зависших транзакций
         await conn.execute(text("SET lock_timeout = '5s'"))
         await conn.execute(
-            text("TRUNCATE TABLE cart_items, carts, products, users RESTART IDENTITY CASCADE")
+            text(
+                "TRUNCATE TABLE cart_items, carts, products, users RESTART IDENTITY CASCADE"
+            )
         )
         await conn.commit()
     await engine.dispose()
@@ -60,7 +67,9 @@ async def clean_tables():
 async def db_session() -> AsyncSession:
     """Сессия базы данных для прямого взаимодействия в тестах."""
     engine = _make_engine()
-    session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    session_maker = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
     async with session_maker() as session:
         yield session
     await engine.dispose()
@@ -69,6 +78,7 @@ async def db_session() -> AsyncSession:
 @pytest_asyncio.fixture
 async def client(db_session: AsyncSession):
     """HTTP-клиент с подменённой зависимостью базы данных."""
+
     async def override_get_db():
         yield db_session
 
@@ -113,12 +123,16 @@ async def admin_user(db_session: AsyncSession) -> User:
 @pytest_asyncio.fixture
 async def user_token(client: AsyncClient, regular_user: User) -> str:
     """JWT-токен обычного пользователя."""
-    resp = await client.post("/auth/login", json={"login": "test@example.com", "password": "Password!1"})
+    resp = await client.post(
+        "/auth/login", json={"login": "test@example.com", "password": "Password!1"}
+    )
     return resp.json()["access_token"]
 
 
 @pytest_asyncio.fixture
 async def admin_token(client: AsyncClient, admin_user: User) -> str:
     """JWT-токен администратора."""
-    resp = await client.post("/auth/login", json={"login": "admin@example.com", "password": "AdminPass!1"})
+    resp = await client.post(
+        "/auth/login", json={"login": "admin@example.com", "password": "AdminPass!1"}
+    )
     return resp.json()["access_token"]

@@ -8,7 +8,9 @@ from app.services.auth import authenticate_user, create_access_token, register_u
 router = APIRouter(prefix="/auth", tags=["Аутентификация"])
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
     """Регистрация нового пользователя. Доступно без аутентификации."""
     try:

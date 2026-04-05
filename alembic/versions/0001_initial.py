@@ -4,6 +4,7 @@ Revision ID: 0001
 Revises:
 Create Date: 2026-03-31 00:00:00.000000
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -25,7 +26,9 @@ def upgrade() -> None:
         sa.Column("hashed_password", sa.String(255), nullable=False),
         sa.Column("is_admin", sa.Boolean(), nullable=False, server_default="false"),
         sa.Column("is_active", sa.Boolean(), nullable=False, server_default="true"),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now()
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
         sa.UniqueConstraint("phone"),
@@ -39,8 +42,12 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("price", sa.Integer(), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now()
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()
+        ),
         sa.Column("is_active", sa.Boolean(), nullable=False, server_default="true"),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -50,8 +57,12 @@ def upgrade() -> None:
         "carts",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now()
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("user_id"),
@@ -64,7 +75,9 @@ def upgrade() -> None:
         sa.Column("cart_id", sa.Integer(), nullable=False),
         sa.Column("product_id", sa.Integer(), nullable=False),
         sa.Column("quantity", sa.Integer(), nullable=False, server_default="1"),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now()
+        ),
         sa.ForeignKeyConstraint(["cart_id"], ["carts.id"]),
         sa.ForeignKeyConstraint(["product_id"], ["products.id"]),
         sa.PrimaryKeyConstraint("id"),

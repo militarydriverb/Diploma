@@ -44,7 +44,9 @@ async def get_product(
     """Получение товара по ID. Доступно авторизованным пользователям."""
     product = await get_product_by_id(db, product_id)
     if not product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Товар не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Товар не найден"
+        )
     return product
 
 
@@ -58,7 +60,9 @@ async def update(
     """Частичное обновление товара. Только для администратора."""
     product = await update_product(db, product_id, data)
     if not product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Товар не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Товар не найден"
+        )
     return product
 
 
@@ -71,4 +75,6 @@ async def delete(
     """Удаление товара. Только для администратора."""
     success = await delete_product(db, product_id)
     if not success:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Товар не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Товар не найден"
+        )

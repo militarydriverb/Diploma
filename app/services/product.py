@@ -7,7 +7,7 @@ from app.schemas.product import ProductCreate, ProductUpdate
 
 async def get_active_products(db: AsyncSession) -> list[Product]:
     """Возвращает все активные товары."""
-    result = await db.execute(select(Product).where(Product.is_active == True))
+    result = await db.execute(select(Product).where(Product.is_active.is_(True)))
     return list(result.scalars().all())
 
 
@@ -30,7 +30,9 @@ async def create_product(db: AsyncSession, data: ProductCreate) -> Product:
     return product
 
 
-async def update_product(db: AsyncSession, product_id: int, data: ProductUpdate) -> Product | None:
+async def update_product(
+    db: AsyncSession, product_id: int, data: ProductUpdate
+) -> Product | None:
     """
     Обновляет только переданные поля товара.
     Возвращает None, если товар не найден.

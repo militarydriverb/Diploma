@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, field_validator
 
 class ProductCreate(BaseModel):
     """Схема создания нового товара."""
+
     name: str
     price: int = Field(ge=0)
     is_active: bool = True
@@ -21,6 +22,7 @@ class ProductCreate(BaseModel):
 
 class ProductUpdate(BaseModel):
     """Схема частичного обновления товара (все поля опциональны)."""
+
     name: str | None = None
     price: int | None = Field(default=None, ge=0)
     is_active: bool | None = None
@@ -28,6 +30,7 @@ class ProductUpdate(BaseModel):
 
 class ProductResponse(BaseModel):
     """Ответ с данными товара."""
+
     id: int
     name: str
     price: int

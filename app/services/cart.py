@@ -49,11 +49,15 @@ async def add_items_to_cart(db: AsyncSession, user_id: int, data: CartItemsAdd) 
     for item_data in data.items:
         # Проверяем, что товар существует и активен
         product_result = await db.execute(
-            select(Product).where(Product.id == item_data.product_id, Product.is_active == True)
+            select(Product).where(
+                Product.id == item_data.product_id, Product.is_active.is_(True)
+            )
         )
         product = product_result.scalar_one_or_none()
         if not product:
-            raise ValueError(f"Товар с id {item_data.product_id} не найден или неактивен")
+            raise ValueError(
+                f"Товар с id {item_data.product_id} не найден или неактивен"
+            )
 
         # Проверяем, есть ли уже такой товар в корзине
         existing_result = await db.execute(
@@ -85,7 +89,9 @@ async def add_item_to_cart(db: AsyncSession, user_id: int, data: CartItemAdd) ->
     return await add_items_to_cart(db, user_id, CartItemsAdd(items=[data]))
 
 
-async def remove_item_from_cart(db: AsyncSession, user_id: int, data: CartItemRemove) -> Cart:
+async def remove_item_from_cart(
+    db: AsyncSession, user_id: int, data: CartItemRemove
+) -> Cart:
     """
     Удаляет позицию из корзины.
     Бросает ValueError, если товара нет в корзине.

@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr, field_validator, model_validator
 
 class UserRegister(BaseModel):
     """Схема регистрации пользователя."""
+
     full_name: str
     email: EmailStr
     phone: str
@@ -19,7 +20,9 @@ class UserRegister(BaseModel):
         if len(v) < 8:
             raise ValueError("Пароль должен содержать не менее 8 символов")
         if not re.match(r"^[a-zA-Z0-9$%&!:]+$", v):
-            raise ValueError("Пароль должен содержать только латинские буквы, цифры и спецсимволы ($%&!:)")
+            raise ValueError(
+                "Пароль должен содержать только латинские буквы, цифры и спецсимволы ($%&!:)"
+            )
         if not re.search(r"[A-Z]", v):
             raise ValueError("Пароль должен содержать хотя бы одну заглавную букву")
         if not re.search(r"[$%&!:]", v):
@@ -44,12 +47,14 @@ class UserRegister(BaseModel):
 
 class UserLogin(BaseModel):
     """Схема входа: логин (email или телефон) и пароль."""
+
     login: str
     password: str
 
 
 class UserResponse(BaseModel):
     """Ответ с данными пользователя (без пароля)."""
+
     id: int
     full_name: str
     email: str
@@ -62,5 +67,6 @@ class UserResponse(BaseModel):
 
 class TokenResponse(BaseModel):
     """JWT-токен доступа."""
+
     access_token: str
     token_type: str = "bearer"

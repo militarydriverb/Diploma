@@ -4,9 +4,11 @@ from fastapi import FastAPI, Request
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.responses import HTMLResponse, JSONResponse
 
-_INDEX_HTML = (Path(__file__).parent / "templates" / "index.html").read_text(encoding="utf-8")
+_INDEX_HTML = (Path(__file__).parent / "templates" / "index.html").read_text(
+    encoding="utf-8"
+)
 
-from app.routers import auth, cart, products
+from app.routers import auth, cart, products  # noqa: E402
 
 app = FastAPI(
     title="Shopping Service API",

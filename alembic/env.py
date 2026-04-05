@@ -7,13 +7,16 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
+from app.config import settings
 from app.database import Base
-from app.models import user, product, cart  # noqa: F401 — import models so metadata is populated
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
+
+# Берём URL из .env через app.config — переопределяет значение из alembic.ini
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 target_metadata = Base.metadata
 

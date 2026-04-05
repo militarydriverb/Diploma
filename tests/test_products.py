@@ -7,7 +7,9 @@ from app.models.product import Product
 pytestmark = pytest.mark.asyncio
 
 
-async def create_product(db: AsyncSession, name: str = "Товар", price: int = 100, is_active: bool = True) -> Product:
+async def create_product(
+    db: AsyncSession, name: str = "Товар", price: int = 100, is_active: bool = True
+) -> Product:
     """Вспомогательная функция создания товара напрямую в БД."""
     product = Product(name=name, price=price, is_active=is_active)
     db.add(product)
@@ -20,14 +22,19 @@ async def create_product(db: AsyncSession, name: str = "Товар", price: int 
 # Получение списка товаров
 # ---------------------------------------------------------------------------
 
+
 class TestListProducts:
-    async def test_list_products_authorized(self, client: AsyncClient, user_token: str, db_session: AsyncSession):
+    async def test_list_products_authorized(
+        self, client: AsyncClient, user_token: str, db_session: AsyncSession
+    ):
         """Авторизованный пользователь получает список активных товаров."""
         await create_product(db_session, "Телефон", 50000)
         await create_product(db_session, "Ноутбук", 80000)
         await create_product(db_session, "Скрытый", 1000, is_active=False)
 
-        resp = await client.get("/products/", headers={"Authorization": f"Bearer {user_token}"})
+        resp = await client.get(
+            "/products/", headers={"Authorization": f"Bearer {user_token}"}
+        )
         assert resp.status_code == 200
         data = resp.json()
         # Неактивный товар не должен попасть в список
@@ -40,7 +47,9 @@ class TestListProducts:
         resp = await client.get("/products/")
         assert resp.status_code == 401
 
-    async def test_get_product_by_id(self, client: AsyncClient, user_token: str, db_session: AsyncSession):
+    async def test_get_product_by_id(
+        self, client: AsyncClient, user_token: str, db_session: AsyncSession
+    ):
         """Получение конкретного товара по ID."""
         product = await create_product(db_session, "Планшет", 30000)
         resp = await client.get(
@@ -52,7 +61,9 @@ class TestListProducts:
 
     async def test_get_product_not_found(self, client: AsyncClient, user_token: str):
         """Запрос несуществующего товара возвращает 404."""
-        resp = await client.get("/products/99999", headers={"Authorization": f"Bearer {user_token}"})
+        resp = await client.get(
+            "/products/99999", headers={"Authorization": f"Bearer {user_token}"}
+        )
         assert resp.status_code == 404
 
 
@@ -60,21 +71,32 @@ class TestListProducts:
 # Создание товара (только администратор)
 # ---------------------------------------------------------------------------
 
+
 class TestCreateProduct:
     async def test_create_product_as_admin(self, client: AsyncClient, admin_token: str):
         """Администратор может создать товар."""
         payload = {"name": "Наушники", "price": 5000, "is_active": True}
-        resp = await client.post("/products/", json=payload, headers={"Authorization": f"Bearer {admin_token}"})
+        resp = await client.post(
+            "/products/",
+            json=payload,
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "Наушники"
         assert data["price"] == 5000
         assert data["is_active"] is True
 
-    async def test_create_product_as_regular_user(self, client: AsyncClient, user_token: str):
+    async def test_create_product_as_regular_user(
+        self, client: AsyncClient, user_token: str
+    ):
         """Обычный пользователь не может создать товар — 403."""
         payload = {"name": "Попытка", "price": 1}
-        resp = await client.post("/products/", json=payload, headers={"Authorization": f"Bearer {user_token}"})
+        resp = await client.post(
+            "/products/",
+            json=payload,
+            headers={"Authorization": f"Bearer {user_token}"},
+        )
         assert resp.status_code == 403
 
     async def test_create_product_unauthorized(self, client: AsyncClient):
@@ -82,10 +104,16 @@ class TestCreateProduct:
         resp = await client.post("/products/", json={"name": "X", "price": 1})
         assert resp.status_code == 401
 
-    async def test_create_product_negative_price(self, client: AsyncClient, admin_token: str):
+    async def test_create_product_negative_price(
+        self, client: AsyncClient, admin_token: str
+    ):
         """Отрицательная цена отклоняется с 422."""
         payload = {"name": "Плохой товар", "price": -100}
-        resp = await client.post("/products/", json=payload, headers={"Authorization": f"Bearer {admin_token}"})
+        resp = await client.post(
+            "/products/",
+            json=payload,
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
         assert resp.status_code == 422
 
 
@@ -93,8 +121,11 @@ class TestCreateProduct:
 # Редактирование товара (только администратор)
 # ---------------------------------------------------------------------------
 
+
 class TestUpdateProduct:
-    async def test_update_product_as_admin(self, client: AsyncClient, admin_token: str, db_session: AsyncSession):
+    async def test_update_product_as_admin(
+        self, client: AsyncClient, admin_token: str, db_session: AsyncSession
+    ):
         """Администратор может отредактировать товар."""
         product = await create_product(db_session, "Старое название", 100)
         resp = await client.patch(
@@ -107,7 +138,9 @@ class TestUpdateProduct:
         assert data["name"] == "Новое название"
         assert data["price"] == 200
 
-    async def test_update_product_not_found(self, client: AsyncClient, admin_token: str):
+    async def test_update_product_not_found(
+        self, client: AsyncClient, admin_token: str
+    ):
         """Редактирование несуществующего товара — 404."""
         resp = await client.patch(
             "/products/99999",
@@ -116,7 +149,9 @@ class TestUpdateProduct:
         )
         assert resp.status_code == 404
 
-    async def test_update_product_as_regular_user(self, client: AsyncClient, user_token: str, db_session: AsyncSession):
+    async def test_update_product_as_regular_user(
+        self, client: AsyncClient, user_token: str, db_session: AsyncSession
+    ):
         """Обычный пользователь не может редактировать товар — 403."""
         product = await create_product(db_session)
         resp = await client.patch(
@@ -131,8 +166,11 @@ class TestUpdateProduct:
 # Удаление товара (только администратор)
 # ---------------------------------------------------------------------------
 
+
 class TestDeleteProduct:
-    async def test_delete_product_as_admin(self, client: AsyncClient, admin_token: str, db_session: AsyncSession):
+    async def test_delete_product_as_admin(
+        self, client: AsyncClient, admin_token: str, db_session: AsyncSession
+    ):
         """Администратор может удалить товар."""
         product = await create_product(db_session)
         resp = await client.delete(
@@ -141,12 +179,18 @@ class TestDeleteProduct:
         )
         assert resp.status_code == 204
 
-    async def test_delete_product_not_found(self, client: AsyncClient, admin_token: str):
+    async def test_delete_product_not_found(
+        self, client: AsyncClient, admin_token: str
+    ):
         """Удаление несуществующего товара — 404."""
-        resp = await client.delete("/products/99999", headers={"Authorization": f"Bearer {admin_token}"})
+        resp = await client.delete(
+            "/products/99999", headers={"Authorization": f"Bearer {admin_token}"}
+        )
         assert resp.status_code == 404
 
-    async def test_delete_product_as_regular_user(self, client: AsyncClient, user_token: str, db_session: AsyncSession):
+    async def test_delete_product_as_regular_user(
+        self, client: AsyncClient, user_token: str, db_session: AsyncSession
+    ):
         """Обычный пользователь не может удалить товар — 403."""
         product = await create_product(db_session)
         resp = await client.delete(

@@ -8,6 +8,7 @@ pytestmark = pytest.mark.asyncio
 # Регистрация
 # ---------------------------------------------------------------------------
 
+
 class TestRegister:
     async def test_register_success(self, client: AsyncClient):
         """Успешная регистрация нового пользователя."""
@@ -62,13 +63,16 @@ class TestRegister:
         resp = await client.post("/auth/register", json=payload)
         assert resp.status_code == 422
 
-    @pytest.mark.parametrize("password", [
-        "short!A",          # меньше 8 символов
-        "nouppercase!1",    # нет заглавной буквы
-        "NOSPECIAL1A",      # нет спецсимвола
-        "НеЛатиница!1A",   # не латиница
-        "NoSpecial1",       # нет спецсимвола
-    ])
+    @pytest.mark.parametrize(
+        "password",
+        [
+            "short!A",  # меньше 8 символов
+            "nouppercase!1",  # нет заглавной буквы
+            "NOSPECIAL1A",  # нет спецсимвола
+            "НеЛатиница!1A",  # не латиница
+            "NoSpecial1",  # нет спецсимвола
+        ],
+    )
     async def test_register_invalid_password(self, client: AsyncClient, password: str):
         """Невалидный пароль отклоняется с кодом 422."""
         payload = {
@@ -81,13 +85,16 @@ class TestRegister:
         resp = await client.post("/auth/register", json=payload)
         assert resp.status_code == 422
 
-    @pytest.mark.parametrize("phone", [
-        "89001234567",    # без +7
-        "+7900123456",   # только 9 цифр
-        "+79001234567x", # лишний символ
-        "+89001234567",  # начинается с +8
-        "7900123456",    # без +
-    ])
+    @pytest.mark.parametrize(
+        "phone",
+        [
+            "89001234567",  # без +7
+            "+7900123456",  # только 9 цифр
+            "+79001234567x",  # лишний символ
+            "+89001234567",  # начинается с +8
+            "7900123456",  # без +
+        ],
+    )
     async def test_register_invalid_phone(self, client: AsyncClient, phone: str):
         """Невалидный телефон отклоняется с кодом 422."""
         payload = {
@@ -105,10 +112,13 @@ class TestRegister:
 # Авторизация
 # ---------------------------------------------------------------------------
 
+
 class TestLogin:
     async def test_login_by_email(self, client: AsyncClient, regular_user):
         """Успешный вход по email возвращает JWT-токен."""
-        resp = await client.post("/auth/login", json={"login": "test@example.com", "password": "Password!1"})
+        resp = await client.post(
+            "/auth/login", json={"login": "test@example.com", "password": "Password!1"}
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert "access_token" in data
@@ -116,19 +126,25 @@ class TestLogin:
 
     async def test_login_by_phone(self, client: AsyncClient, regular_user):
         """Успешный вход по номеру телефона возвращает JWT-токен."""
-        resp = await client.post("/auth/login", json={"login": "+71234567890", "password": "Password!1"})
+        resp = await client.post(
+            "/auth/login", json={"login": "+71234567890", "password": "Password!1"}
+        )
         assert resp.status_code == 200
         assert "access_token" in resp.json()
 
     async def test_login_wrong_password(self, client: AsyncClient, regular_user):
         """Неверный пароль возвращает 401."""
-        resp = await client.post("/auth/login", json={"login": "test@example.com", "password": "WrongPass!1"})
+        resp = await client.post(
+            "/auth/login", json={"login": "test@example.com", "password": "WrongPass!1"}
+        )
         assert resp.status_code == 401
         assert resp.json()["code"] == 401
 
     async def test_login_unknown_user(self, client: AsyncClient):
         """Несуществующий пользователь возвращает 401."""
-        resp = await client.post("/auth/login", json={"login": "nobody@example.com", "password": "Secret!1"})
+        resp = await client.post(
+            "/auth/login", json={"login": "nobody@example.com", "password": "Secret!1"}
+        )
         assert resp.status_code == 401
 
     async def test_unauthorized_access_without_token(self, client: AsyncClient):
@@ -141,5 +157,7 @@ class TestLogin:
 
     async def test_unauthorized_access_with_invalid_token(self, client: AsyncClient):
         """Запрос с невалидным токеном возвращает 401."""
-        resp = await client.get("/products/", headers={"Authorization": "Bearer invalid.token.here"})
+        resp = await client.get(
+            "/products/", headers={"Authorization": "Bearer invalid.token.here"}
+        )
         assert resp.status_code == 401
