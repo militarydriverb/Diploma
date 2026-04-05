@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field
 
 from app.schemas.product import ProductResponse
 
@@ -6,28 +6,12 @@ from app.schemas.product import ProductResponse
 class CartItemAdd(BaseModel):
     """Схема добавления одного товара в корзину."""
     product_id: int
-    quantity: int = 1
-
-    @field_validator("quantity")
-    @classmethod
-    def validate_quantity(cls, v: int) -> int:
-        """Количество должно быть не менее 1."""
-        if v < 1:
-            raise ValueError("Количество должно быть не менее 1")
-        return v
+    quantity: int = Field(default=1, ge=1)
 
 
 class CartItemsAdd(BaseModel):
     """Схема массового добавления товаров в корзину."""
-    items: list[CartItemAdd]
-
-    @field_validator("items")
-    @classmethod
-    def validate_items(cls, v: list) -> list:
-        """Список товаров не может быть пустым."""
-        if not v:
-            raise ValueError("Список товаров не может быть пустым")
-        return v
+    items: list[CartItemAdd] = Field(min_length=1)
 
 
 class CartItemRemove(BaseModel):

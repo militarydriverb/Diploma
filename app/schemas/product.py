@@ -1,43 +1,29 @@
 from datetime import datetime
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class ProductCreate(BaseModel):
     """Схема создания нового товара."""
     name: str
-    price: int
+    price: int = Field(ge=0)
     is_active: bool = True
-
-    @field_validator("price")
-    @classmethod
-    def validate_price(cls, v: int) -> int:
-        """Цена не может быть отрицательной."""
-        if v < 0:
-            raise ValueError("Цена не может быть отрицательной")
-        return v
 
     @field_validator("name")
     @classmethod
     def validate_name(cls, v: str) -> str:
-        """Название не может быть пустым."""
-        if not v.strip():
+        """Название не может быть пустым или состоять только из пробелов."""
+        v = v.strip()
+        if not v:
             raise ValueError("Название не может быть пустым")
-        return v.strip()
+        return v
 
 
 class ProductUpdate(BaseModel):
     """Схема частичного обновления товара (все поля опциональны)."""
     name: str | None = None
-    price: int | None = None
+    price: int | None = Field(default=None, ge=0)
     is_active: bool | None = None
-
-    @field_validator("price")
-    @classmethod
-    def validate_price(cls, v: int | None) -> int | None:
-        if v is not None and v < 0:
-            raise ValueError("Цена не может быть отрицательной")
-        return v
 
 
 class ProductResponse(BaseModel):
