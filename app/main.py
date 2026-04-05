@@ -24,6 +24,18 @@ async def unauthorized_handler(request: Request, exc):
     )
 
 
+@app.get("/", tags=["Служебные"])
+async def root():
+    """Главная страница — статус и ссылки на документацию."""
+    return {
+        "service": "Shopping Service API",
+        "version": "1.0.0",
+        "status": "ok",
+        "docs": "/docs",
+        "redoc": "/redoc",
+    }
+
+
 @app.get("/health", tags=["Служебные"])
 async def health_check():
     """Проверка работоспособности сервиса."""
