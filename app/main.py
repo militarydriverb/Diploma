@@ -1,5 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+
+_INDEX_HTML = (Path(__file__).parent / "templates" / "index.html").read_text(encoding="utf-8")
 
 from app.routers import auth, cart, products
 
@@ -24,16 +28,10 @@ async def unauthorized_handler(request: Request, exc):
     )
 
 
-@app.get("/", tags=["Служебные"])
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def root():
-    """Главная страница — статус и ссылки на документацию."""
-    return {
-        "service": "Shopping Service API",
-        "version": "1.0.0",
-        "status": "ok",
-        "docs": "/docs",
-        "redoc": "/redoc",
-    }
+    """Стартовая страница сервиса."""
+    return _INDEX_HTML
 
 
 @app.get("/health", tags=["Служебные"])
