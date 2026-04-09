@@ -34,7 +34,7 @@ jobs:
         image: postgres:16-alpine
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: Qwerty123
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: diploma_test
         ports:
           - 5432:5432
