@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
@@ -11,9 +12,10 @@ from app.main import app
 from app.models.user import User
 from app.services.auth import hash_password
 
-# URL тестовой базы данных
-TEST_DATABASE_URL = (
-    "postgresql+asyncpg://postgres:Qwerty123@localhost:5432/diploma_test"
+# URL тестовой базы данных — берётся из окружения или локальный дефолт
+TEST_DATABASE_URL = os.getenv(
+    "TEST_DATABASE_URL",
+    "postgresql+asyncpg://postgres:Qwerty123@localhost:5432/diploma_test",
 )
 
 

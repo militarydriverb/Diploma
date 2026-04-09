@@ -34,7 +34,7 @@ jobs:
         image: postgres:16-alpine
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          POSTGRES_PASSWORD: Qwerty123
           POSTGRES_DB: diploma_test
         ports:
           - 5432:5432
@@ -45,7 +45,8 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql+asyncpg://postgres:${{ secrets.TEST_DB_PASSWORD }}@localhost:5432/diploma_test_test
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/diploma_test
+      TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/diploma_test
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
