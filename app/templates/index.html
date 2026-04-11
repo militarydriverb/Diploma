@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Service API</title>
+    <style>
+        body { font-family: sans-serif; max-width: 640px; margin: 60px auto; padding: 0 20px; color: #222; }
+        h1 { font-size: 1.8rem; margin-bottom: 4px; }
+        .badge { display: inline-block; background: #22c55e; color: #fff; font-size: 0.75rem; padding: 2px 10px; border-radius: 99px; vertical-align: middle; margin-left: 8px; }
+        p { color: #555; margin-top: 6px; }
+        .section { margin-top: 32px; }
+        .section h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: .05em; color: #888; margin-bottom: 12px; }
+        .card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; text-decoration: none; color: inherit; display: block; }
+        .card:hover { border-color: #6366f1; background: #f5f5ff; }
+        .card strong { font-size: 1rem; }
+        .card span { display: block; font-size: 0.875rem; color: #666; margin-top: 2px; }
+        .method { font-size: 0.75rem; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-right: 6px; }
+        .post  { background: #fef9c3; color: #854d0e; }
+        .get   { background: #dcfce7; color: #166534; }
+    </style>
+</head>
+<body>
+    <h1>Shopping Service API <span class="badge">v1.0.0</span></h1>
+    <p>API-бэкенд сервиса покупки товаров для авторизованных пользователей.</p>
+
+    <div class="section">
+        <h2>С чего начать</h2>
+        <a class="card" href="/docs">
+            <strong>Swagger UI</strong>
+            <span>Интерактивная документация — можно сразу вызывать эндпоинты</span>
+        </a>
+        <a class="card" href="/redoc">
+            <strong>ReDoc</strong>
+            <span>Удобное чтение полной документации API</span>
+        </a>
+    </div>
+
+    <div class="section">
+        <h2>Основные эндпоинты</h2>
+        <a class="card" href="/docs#/Аутентификация/register_auth_register_post">
+            <span><span class="method post">POST</span>/auth/register — регистрация нового пользователя</span>
+        </a>
+        <a class="card" href="/docs#/Аутентификация/login_auth_login_post">
+            <span><span class="method post">POST</span>/auth/login — вход по email или телефону, получение JWT</span>
+        </a>
+        <a class="card" href="/docs#/Товары/list_products_products__get">
+            <span><span class="method get">GET</span>/products/ — список активных товаров</span>
+        </a>
+        <a class="card" href="/docs#/Корзина/get_cart_cart__get">
+            <span><span class="method get">GET</span>/cart/ — корзина текущего пользователя</span>
+        </a>
+        <a class="card" href="/docs#/Корзина/add_single_item_cart_items_post">
+            <span><span class="method post">POST</span>/cart/items — добавить товар в корзину</span>
+        </a>
+    </div>
+
+    <div class="section">
+        <h2>Служебные</h2>
+        <a class="card" href="/health">
+            <span><span class="method get">GET</span>/health — проверка работоспособности</span>
+        </a>
+    </div>
+</body>
+</html>
